@@ -4,6 +4,11 @@ Customers browse products, search & filter, view details, add to a session cart,
 checkout with shipping info, and review order history. Admins manage everything in Django Admin.
 
 ## 1) Run it (Windows, 2 minutes)
+
+**New machine? Just double-click `setup.bat`** — it installs everything and starts the server.
+Full Arabic guide: `SETUP.md`.
+
+Manual way:
 ```powershell
 cd ecommerce
 py -m venv venv
