@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+{% block title %}My profile — E-Shop{% endblock %}
+{% block content %}
+<div class="row justify-content-center"><div class="col-md-7">
+<div class="card auth-card p-4 shadow-sm">
+<div class="d-flex gap-3 align-items-center">
+<div class="auth-icon"><i class="bi bi-person-circle"></i></div>
+<div><h3 class="fw-bold mb-0">{{ user.first_name }} {{ user.last_name }}</h3><span class="text-muted">{{ user.email }}</span></div>
+</div><hr>
+<div class="row text-center">
+<div class="col-4"><div class="fw-bold fs-4">{{ user.orders.count }}</div><small class="text-muted">Orders</small></div>
+<div class="col-4"><div class="fw-bold fs-4">{{ cart_count }}</div><small class="text-muted">In cart</small></div>
+<div class="col-4"><div class="fw-bold fs-4">{{ user.phone }}</div><small class="text-muted">Mobile</small></div>
+</div><hr>
+<a class="btn btn-brand" href="{% url 'orders:history' %}"><i class="bi bi-box-seam"></i> My orders</a>
+<a class="btn btn-outline-secondary" href="{% url 'catalog:product_list' %}">Shop</a>
+</div></div></div>
+{% endblock %}

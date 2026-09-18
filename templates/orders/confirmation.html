@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+{% block title %}Order #{{ order.id }} confirmed — E-Shop{% endblock %}
+{% block content %}
+<div class="steps">
+  <span class="step done"><span class="dot">✓</span> Cart</span> →
+  <span class="step done"><span class="dot">✓</span> Checkout</span> →
+  <span class="step now"><span class="dot">3</span> Done</span>
+</div>
+<div class="card side-card p-5 text-center">
+  <div class="auth-icon mx-auto mb-3" style="background:#dcfce7;color:#15803d;font-size:2rem;width:72px;height:72px"><i class="bi bi-check-circle-fill"></i></div>
+  <h2 class="fw-bold">Thank you! Order #{{ order.id }} is confirmed 🎉</h2>
+  <p class="text-muted">Total <strong>{{ order.total }} EGP</strong> • {{ order.created_at }}<br>We will deliver to {{ order.address }}, {{ order.city }}.</p>
+  <a class="btn btn-brand" href="{% url 'orders:detail' order.id %}"><i class="bi bi-receipt"></i> View receipt</a>
+  <a class="btn btn-outline-secondary" href="{% url 'catalog:product_list' %}">Continue shopping</a>
+</div>
+{% endblock %}

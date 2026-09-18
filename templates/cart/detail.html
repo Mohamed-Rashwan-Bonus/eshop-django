@@ -1,0 +1,58 @@
+{% extends 'base.html' %}
+{% block title %}Your cart — E-Shop{% endblock %}
+{% block content %}
+<div class="steps">
+  <span class="step now"><span class="dot">1</span> Cart</span> →
+  <span class="step"><span class="dot">2</span> Checkout</span> →
+  <span class="step"><span class="dot">3</span> Done</span>
+</div>
+<h2 class="fw-bold mb-3"><i class="bi bi-cart3"></i> Your cart</h2>
+{% if cart.total %}
+<div class="row">
+  <div class="col-lg-8">
+    {% for line in cart.items %}
+    <div class="card side-card p-3 mb-3">
+      <div class="d-flex gap-3">
+        <img src="{{ line.product.cover_url }}" alt="" style="width:96px;height:96px;object-fit:cover;border-radius:12px">
+        <div class="flex-grow-1">
+          <div class="d-flex justify-content-between">
+            <h6 class="fw-bold mb-0"><a class="text-dark text-decoration-none" href="{% url 'catalog:product_detail' line.product.slug %}">{{ line.product.name }}</a></h6>
+            <a class="text-danger" data-confirm="Remove this item?" href="{% url 'cart:remove' line.product.id %}"><i class="bi bi-trash"></i></a>
+          </div>
+          <small class="text-muted">{{ line.product.price }} EGP each</small>
+          <div class="d-flex justify-content-between align-items-center mt-2">
+            <span>
+              <a class="btn btn-sm btn-outline-secondary" href="{% url 'cart:decrease' line.product.id %}">−</a>
+              <strong class="mx-2">{{ line.qty }}</strong>
+              <a class="btn btn-sm btn-outline-secondary" href="{% url 'cart:increase' line.product.id %}">+</a>
+            </span>
+            <strong>{{ line.subtotal }} EGP</strong>
+          </div>
+        </div>
+      </div>
+    </div>
+    {% endfor %}
+    <a class="text-danger small" data-confirm="Clear the whole cart?" href="{% url 'cart:clear' %}"><i class="bi bi-trash"></i> Clear cart</a>
+  </div>
+  <div class="col-lg-4">
+    <div class="card side-card p-4 position-sticky" style="top:90px">
+      <h5 class="fw-bold">Order summary</h5>
+      <div class="d-flex justify-content-between text-muted"><span>Subtotal</span><span>{{ cart.total }} EGP</span></div>
+      <div class="d-flex justify-content-between text-muted"><span>Delivery</span><span class="text-success">Calculated at checkout</span></div>
+      <hr>
+      <div class="d-flex justify-content-between fw-bold fs-5"><span>Total</span><span>{{ cart.total }} EGP</span></div>
+      <a class="btn btn-success btn-lg w-100 mt-3" href="{% url 'orders:checkout' %}"><i class="bi bi-lock"></i> Secure checkout</a>
+      <a class="btn btn-outline-secondary w-100 mt-2" href="{% url 'catalog:product_list' %}">Continue shopping</a>
+      <small class="text-muted d-block mt-2 text-center"><i class="bi bi-shield-check"></i> Totals are re-calculated on the server.</small>
+    </div>
+  </div>
+</div>
+{% else %}
+<div class="empty-state card side-card">
+  <div class="big-icon"><i class="bi bi-cart-x"></i></div>
+  <h5 class="fw-bold mt-2">Your cart is empty</h5>
+  <p class="text-muted">Beautiful things are waiting for you.</p>
+  <a class="btn btn-brand" href="{% url 'catalog:product_list' %}">Start shopping</a>
+</div>
+{% endif %}
+{% endblock %}

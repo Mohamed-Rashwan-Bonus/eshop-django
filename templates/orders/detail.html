@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+{% block title %}Order #{{ order.id }} — E-Shop{% endblock %}
+{% block content %}
+<h2 class="fw-bold"><i class="bi bi-receipt"></i> Order #{{ order.id }}</h2>
+<p class="text-muted">{{ order.created_at }} • Ship to <strong>{{ order.full_name }}</strong>, {{ order.address }}, {{ order.city }} • {{ order.phone }}</p>
+<div class="card side-card p-0 overflow-hidden">
+<table class="table mb-0 align-middle">
+<tr class="table-light"><th>Item</th><th>Price</th><th>Qty</th><th class="text-end">Subtotal</th></tr>
+{% for i in order.items.all %}
+<tr><td>{{ i.product_name }}</td><td>{{ i.price }} EGP</td><td>× {{ i.quantity }}</td><td class="text-end">{{ i.subtotal }} EGP</td></tr>
+{% endfor %}
+<tr><td colspan="3" class="text-end fw-bold">Total</td><td class="text-end fw-bold">{{ order.total }} EGP</td></tr>
+</table>
+</div>
+<a class="btn btn-outline-secondary mt-3" href="{% url 'orders:history' %}">← Back to history</a>
+{% endblock %}

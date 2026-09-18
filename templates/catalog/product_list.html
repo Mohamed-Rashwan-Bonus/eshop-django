@@ -1,0 +1,92 @@
+{% extends 'base.html' %}
+{% block title %}Shop all products — E-Shop{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-3">
+  <h2 class="fw-bold mb-0">Shop <small class="text-muted fs-6">({{ products|length }} result{{ products|length|pluralize }})</small></h2>
+  <form method="get" class="d-flex gap-2">
+    <input type="hidden" name="q" value="{{ request.GET.q }}">
+    <input type="hidden" name="category" value="{{ request.GET.category }}">
+    <input type="hidden" name="min_price" value="{{ request.GET.min_price }}">
+    <input type="hidden" name="max_price" value="{{ request.GET.max_price }}">
+    <select name="ordering" class="form-select w-auto" onchange="this.form.submit()">
+      <option value="">Sort: Featured</option>
+      <option value="price" {% if request.GET.ordering == 'price' %}selected{% endif %}>Price: low → high</option>
+      <option value="-price" {% if request.GET.ordering == '-price' %}selected{% endif %}>Price: high → low</option>
+      <option value="name" {% if request.GET.ordering == 'name' %}selected{% endif %}>Name: A → Z</option>
+      <option value="-name" {% if request.GET.ordering == '-name' %}selected{% endif %}>Name: Z → A</option>
+    </select>
+  </form>
+</div>
+
+{% if request.GET.q or request.GET.category or request.GET.min_price or request.GET.max_price %}
+<div class="d-flex flex-wrap gap-2 mb-3">
+  <span class="text-muted small align-self-center">Active filters:</span>
+  {% if request.GET.q %}<span class="badge text-bg-dark">“{{ request.GET.q }}”</span>{% endif %}
+  {% if request.GET.category %}<span class="badge text-bg-dark">{{ request.GET.category }}</span>{% endif %}
+  {% if request.GET.min_price %}<span class="badge text-bg-dark">min {{ request.GET.min_price }}</span>{% endif %}
+  {% if request.GET.max_price %}<span class="badge text-bg-dark">max {{ request.GET.max_price }}</span>{% endif %}
+  <a class="small" href="{% url 'catalog:product_list' %}">Clear all ✕</a>
+</div>
+{% endif %}
+
+<div class="row">
+  <aside class="col-lg-3 mb-4">
+    <div class="card side-card p-3 position-sticky" style="top:90px">
+      <form method="get">
+        <h6 class="fw-bold"><i class="bi bi-search"></i> Search</h6>
+        <input name="q" value="{{ request.GET.q }}" class="form-control mb-3" placeholder="e.g. iPhone">
+        <h6 class="fw-bold"><i class="bi bi-tags"></i> Category</h6>
+        <div class="d-grid gap-1 mb-3">
+          <a class="btn btn-sm {% if not request.GET.category %}btn-dark{% else %}btn-outline-dark{% endif %}" href="?{% if request.GET.q %}q={{ request.GET.q }}&{% endif %}{% if request.GET.ordering %}ordering={{ request.GET.ordering }}{% endif %}">All</a>
+          {% for c in categories %}
+          <a class="btn btn-sm {% if request.GET.category == c.slug %}btn-dark{% else %}btn-outline-dark{% endif %}" href="?category={{ c.slug }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}{% if request.GET.ordering %}&ordering={{ request.GET.ordering }}{% endif %}">{{ c.name }}</a>
+          {% endfor %}
+        </div>
+        <h6 class="fw-bold"><i class="bi bi-cash-coin"></i> Price (EGP)</h6>
+        <div class="d-flex gap-2 mb-3">
+          <input name="min_price" value="{{ request.GET.min_price }}" type="number" min="0" step="0.01" class="form-control" placeholder="Min">
+          <input name="max_price" value="{{ request.GET.max_price }}" type="number" min="0" step="0.01" class="form-control" placeholder="Max">
+        </div>
+        <button class="btn btn-brand w-100"><i class="bi bi-funnel"></i> Apply filters</button>
+      </form>
+    </div>
+  </aside>
+
+  <div class="col-lg-9">
+    <div class="row">
+      {% for p in products %}
+      <div class="col-6 col-md-4 mb-4">
+        <div class="card product-card h-100">
+          <div class="img-wrap">
+            <a href="{% url 'catalog:product_detail' p.slug %}"><img src="{{ p.cover_url }}" alt="{{ p.name }}" loading="lazy"></a>
+            <div class="badge-float">
+              {% if p.is_new %}<span class="badge text-bg-primary">New</span>{% endif %}
+              {% if p.is_low_stock %}<span class="badge text-bg-warning">Only {{ p.stock }} left</span>{% endif %}
+              {% if p.is_out_of_stock %}<span class="badge text-bg-danger">Out of stock</span>{% endif %}
+            </div>
+          </div>
+          <div class="card-body d-flex flex-column">
+            <small class="text-muted">{{ p.category.name }}</small>
+            <h6 class="fw-bold mb-1"><a class="text-dark text-decoration-none" href="{% url 'catalog:product_detail' p.slug %}">{{ p.name }}</a></h6>
+            <div class="mt-auto d-flex justify-content-between align-items-center pt-2">
+              <span class="price">{{ p.price }} EGP</span>
+              {% if p.is_out_of_stock %}<span class="stock-out">Unavailable</span>
+              {% else %}<a class="btn btn-sm btn-brand" href="{% url 'cart:add' p.id %}"><i class="bi bi-cart-plus"></i> Add</a>{% endif %}
+            </div>
+          </div>
+        </div>
+      </div>
+      {% empty %}
+      <div class="col-12">
+        <div class="empty-state card side-card">
+          <div class="big-icon"><i class="bi bi-search"></i></div>
+          <h5 class="fw-bold mt-2">No products match your search</h5>
+          <p class="text-muted">Try another name, remove a filter, or browse everything.</p>
+          <a class="btn btn-brand" href="{% url 'catalog:product_list' %}">Show all products</a>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+</div>
+{% endblock %}

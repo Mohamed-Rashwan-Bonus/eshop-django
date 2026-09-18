@@ -1,0 +1,46 @@
+{% extends 'base.html' %}
+{% block title %}Checkout — E-Shop{% endblock %}
+{% block content %}
+<div class="steps">
+  <span class="step done"><span class="dot">✓</span> Cart</span> →
+  <span class="step now"><span class="dot">2</span> Checkout</span> →
+  <span class="step"><span class="dot">3</span> Done</span>
+</div>
+<h2 class="fw-bold mb-3"><i class="bi bi-lock"></i> Secure checkout</h2>
+<div class="row">
+  <div class="col-lg-7 mb-4">
+    <div class="card side-card p-4">
+      <h5 class="fw-bold mb-3"><i class="bi bi-truck"></i> Shipping information</h5>
+      <form method="post">{% csrf_token %}
+        {% if form.non_field_errors %}<div class="alert alert-danger">{{ form.non_field_errors }}</div>{% endif %}
+        {% for f in form %}
+        <div class="mb-3"><label class="form-label fw-semibold">{{ f.label }}</label>{{ f }}
+          {% if f.errors %}<div class="text-danger small">{{ f.errors }}</div>{% endif %}</div>
+        {% endfor %}
+        <button class="btn btn-success btn-lg w-100"><i class="bi bi-check-circle"></i> Confirm order • {{ cart.total }} EGP</button>
+      </form>
+    </div>
+  </div>
+  <div class="col-lg-5">
+    <div class="card side-card p-4 position-sticky" style="top:90px">
+      <div class="d-flex justify-content-between align-items-center mb-2">
+        <h5 class="fw-bold mb-0">Review items ({{ cart|length }})</h5>
+        <a class="small" href="{% url 'cart:detail' %}">Edit cart</a>
+      </div>
+      <ul class="list-group list-group-flush">
+        {% for line in cart.items %}
+        <li class="list-group-item d-flex gap-2 px-0">
+          <img src="{{ line.product.cover_url }}" style="width:52px;height:52px;object-fit:cover;border-radius:10px" alt="">
+          <div class="flex-grow-1"><div class="fw-semibold small">{{ line.product.name }}</div>
+          <small class="text-muted">× {{ line.qty }}</small></div>
+          <strong class="small">{{ line.subtotal }} EGP</strong>
+        </li>
+        {% endfor %}
+      </ul>
+      <hr>
+      <div class="d-flex justify-content-between fw-bold fs-5"><span>Total</span><span>{{ cart.total }} EGP</span></div>
+      <small class="text-muted"><i class="bi bi-shield-check"></i> Stock is verified again before payment.</small>
+    </div>
+  </div>
+</div>
+{% endblock %}
