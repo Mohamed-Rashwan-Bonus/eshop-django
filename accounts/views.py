@@ -2,6 +2,7 @@ from django.shortcuts import render, redirect
 from django.contrib.auth import login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
+from django.db import IntegrityError
 from .forms import RegisterForm, EmailLoginForm
 
 
@@ -13,7 +14,11 @@ def register_view(request):
     if request.method == 'POST' and form.is_valid():
         user = form.save(commit=False)
         user.set_password(form.cleaned_data['password'])
-        user.save()
+        try:
+            user.save()  # race-proof: double-clicks hit the DB unique constraint
+        except IntegrityError:
+            form.add_error('email', 'This email was just registered. Try logging in instead.')
+            return render(request, 'accounts/register.html', {'form': form})
         login(request, user)
         messages.success(request, f'Welcome {user.first_name}!')
         return redirect('catalog:product_list')

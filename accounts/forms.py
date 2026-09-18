@@ -19,6 +19,13 @@ class RegisterForm(forms.ModelForm):
             'phone': forms.TextInput(attrs={**CTRL, 'placeholder': '01012345678'}),
         }
 
+    def clean_email(self):
+        # Req 3: friendly message instead of a raw DB error page.
+        email = self.cleaned_data.get('email')
+        if email and CustomUser.objects.filter(email__iexact=email).exists():
+            raise forms.ValidationError('This email is already registered. Try logging in instead.')
+        return email
+
     def clean(self):
         data = super().clean()
         # Req 4: confirmation must match
