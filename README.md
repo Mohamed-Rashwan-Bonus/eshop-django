@@ -50,21 +50,9 @@ Microsoft Store stub — use `py` or the `.\venv\Scripts\python.exe` path.
 | 7 | Frontend/UX | templates+static | Bootstrap 5, badges, toasts, responsive |
 | 8 | QA/DB/Docs | — | test all 54, `seed`, README, demo |
 
-## 4) Push to GitHub
-```powershell
-cd ecommerce
-git init
-git add .
-git commit -m "E-Shop final project - team of 8"
-gh repo create eshop-django --public --source=. --push   # needs GitHub CLI
-# or manually: create repo on github.com, then:
-# git remote add origin https://github.com/<you>/eshop-django.git
-# git branch -M main
-# git push -u origin main
-```
-`.env`, `venv/`, `media/` and `db.sqlite3` are git-ignored on purpose.
+> `.env`, `venv/` and `media/` are never committed (see `.gitignore`) — each machine generates its own via `setup.bat`.
 
-## 5) Design notes (2026 UX best practices)
+## 4) Design notes (2026 UX best practices)
 Sticky navbar with live search (`/` focuses it) + cart badge, scannable cards with
 New / Low-stock / Out-of-stock badges + quick-add, visible active filters with one-click
 clear, guided Cart → Checkout → Done steps, single-page checkout with live order review,
