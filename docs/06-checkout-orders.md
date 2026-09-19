@@ -1,69 +1,108 @@
 # عضو 6 — الدفع والأوردرات (Checkout + Orders) — الشروط 42 ل 54
 
 ## 1. مهمتك ايه بالظبط
-أخطر جزء: تحويل السلة لأوردر حقيقي + تقليل المخزون + تاريخ الأوردرات. ملفاتك: `orders/models.py` و `orders/views.py` و `orders/forms.py`.
+أخطر جزء في المشروع: تحويل السلة لأوردر حقيقي + تقليل المخزون + تاريخ الأوردرات. الغلطة هنا يعني فلوس ضايعة. ملفاتك: orders/models.py و orders/views.py و orders/forms.py.
 
-## 2. المفاهيم اللي لازم تعرف تشرحها
-- الـ transaction.atomic يعني يا كل العمليات تنجح يا كلها تتلغي — مينفعش أوردر يتعمل من غير ما المخزون ينقص.
-- `F('stock') - qty` يعني الخصم بيحصل جوه الداتابيز نفسها (آمن ضد طلبين في نفس الثانية).
-- حساب المجموع على السيرفر (شرط 45) يعني منثقش في أي رقم جاي من المتصفح.
-- سعر لحظة الشراء بيتخزن في OrderItem عشان لو السعر اتغير بعدين، الفاتورة القديمة تفضل صح.
+## 2. من الصفر خالص: يعني ايه اللي انت عملته
+- الـ transaction.atomic يعني صفقة واحدة: يا كل الخطوات تنجح مع بعض (أوردر + أصناف + نقص مخزون + تفريغ سلة) يا كلها تتلغي. مينفعش أوردر يتعمل من غير ما المخزون ينقص.
+- `F('stock') - qty` يعني الخصم بيحصل جوه الداتابيز نفسها مش في بايثون. الفرق مهم: لو اتنين اشتروا آخر قطعة في نفس الثانية، الداتابيز بترتبهم واحد واحد.
+- حساب المجموع على السيرفر (شرط 45) يعني منثقش في أي رقم جاي من المتصفح، لأن أي حد يقدر يعدل HTML ويبعت total مزيف.
+- سعر لحظة الشراء بيتخزن في OrderItem: لو سعر المنتج اتغير بعد شهر، الفاتورة القديمة تفضل صح.
 
-## 3. الملفات بتاعتك سطر بسطر
+## 3. قاموس المصطلحات بتاعتك
+- atomic: يا الكل يا مفيش (ضمان سلامة العمليات).
+- F expression: عملية حسابية بتتنفذ جوه الداتابيز.
+- commit=False: جهز الـ object من الفورم من غير حفظ عشان تكمل بياناته (اليوزر والمجموع) وبعدين احفظ.
+- rollback: التراجع عن كل حاجة حصلت جوه الصفقة.
+- related_name: اسم الوصول العكسي (order.items يعني أصناف الأوردر).
+
+## 4. الكود سطر بسطر
 ### orders/models.py
 ```
 class Order(models.Model):
     user = models.ForeignKey(AUTH_USER, on_delete=models.CASCADE, related_name='orders')
-    full_name, email, phone, address, city   # بيانات الشحن (شرط 43)
-    total = models.DecimalField(...)         # محسوب على السيرفر (شرط 45)
+```
+- كل أوردر مربوط بصاحبه. لو اليوزر اتمسح أوردراته تتمسح معاه (CASCADE هنا صح لأن الأوردر ملكه).
+```
+    full_name, email, phone, address, city
+```
+- بيانات الشحن اللي الزبون كتبها (شرط 43).
+```
+    total = models.DecimalField(...)
     created_at = models.DateTimeField(auto_now_add=True)
+```
+- المجموع محسوب على السيرفر (شرط 45) والتاريخ تلقائي.
+```
 class OrderItem(models.Model):
     order = models.ForeignKey(Order, related_name='items')
     product = models.ForeignKey(Product, on_delete=models.SET_NULL, null=True)
     product_name, price, quantity
-    def subtotal(self): return self.price * self.quantity
 ```
-- SET_NULL عشان لو منتج اتمسح بعد البيع، الأوردر يفضل موجود باسمه وسعره.
+- SET_NULL عشان لو منتج اتمسح بعد البيع، الأوردر يفضل موجود باسمه وسعره. والسعر هنا هو سعر لحظة الشراء (شرط 47).
 
-### orders/views.py — checkout (الشروط 42 ل 50)
+### checkout (الشروط 42 ل 50)
 ```
-@login_required                                    # شرط 42
-def checkout(request):
+@login_required
+```
+- شرط 42: الأعضاء بس. الزائر بيتحول للدخول.
+```
     cart = Cart(request)
-    if len(cart) == 0: ... redirect ...           # سلة فاضية ملهاش checkout
-    form = CheckoutForm(request.POST or None)     # بيانات الشحن + مراجعة السلة (43 و44)
-    if POST and form.is_valid():
+    if len(cart) == 0: redirect
+```
+- سلة فاضية ملهاش checkout.
+```
+    form = CheckoutForm(request.POST or None)
+```
+- فورم الشحن، وجنبها الزبون بيراجع أصنافه قبل التأكيد (شرط 43 و 44).
+```
         with transaction.atomic():
-            total = cart.total()                   # شرط 45: من السيرفر
-            order = form.save(commit=False); order.user = request.user; order.total = total
-            order.save()                           # شرط 46
+            total = cart.total()
+            order = form.save(commit=False)
+            order.user = request.user
+            order.total = total
+            order.save()
+```
+- شرط 45 و 46: المجموع من السيرفر والأوردر بيتعمل بصاحبه ومجموعه.
+```
             for line in cart.items():
                 if line['qty'] > p.stock: rollback + رسالة
-                OrderItem.objects.create(...)      # شرط 47 بسعر الخصم
-                Product.objects.filter(pk=p.pk).update(stock=F('stock') - qty)  # شرط 48
-            cart.clear()                           # شرط 49
-        return redirect('orders:confirmation', ...)  # شرط 50
+                OrderItem.objects.create(... price=p.current_price ...)
+                Product.objects.filter(pk=p.pk).update(stock=F('stock') - qty)
+            cart.clear()
+        return redirect('orders:confirmation', ...)
 ```
+- شرط 47: الأصناف بسعر الخصم. شرط 48: نقص المخزون جوه الداتابيز. شرط 49: تفريغ السلة. شرط 50: تحويل لصفحة التأكيد.
+- لو صنف خلص أثناء الدفع: rollback لكل حاجة ورسالة واضحة.
 
 ### history و detail (الشروط 51 ل 54)
 ```
-Order.objects.filter(user=request.user)                       # شرط 51: أوردراتي بس
-get_object_or_404(Order, id=order_id, user=request.user)      # شرط 54: أوردر غيري = 404
+Order.objects.filter(user=request.user)
 ```
-- شرط 53: صفحة التفاصيل فيها الرقم والتاريخ والأصناف والكميات والأسعار والمجموع.
+- شرط 51: تاريخ أوردراتي أنا بس.
+```
+get_object_or_404(Order, id=order_id, user=request.user)
+```
+- شرط 54: أوردر حد تاني = 404 حتى لو خمنت الرقم. واتجربت فعلا.
+- شرط 52 و 53: صفحة التفاصيل فيها الرقم والتاريخ والأصناف والكميات والأسعار والمجموع.
 
-## 4. انت مربوط بمين
-- عضو 2: `request.user` هو صاحب الأوردر.
-- عضو 5: بتستلم السلة وتصفرها، وبتستخدم نفس current_price.
+## 5. مربوط بمين
+- عضو 2: request.user هو صاحب الأوردر.
+- عضو 5: بتستلم السلة وتصفرها وبنفس سعرها.
 - عضو 3: بتنقص الـ stock بتاعه.
 
-## 5. أسئلة مناقشة متوقعة
-- س: لو اتنين اشتروا آخر قطعة مع بعض؟ ج: الـ transaction + الـ F() بيخلوا واحد ينجح والتاني يشوف رسالة ان المخزون خلص.
-- س: ليه المجموع من السيرفر؟ ج: عشان أي حد يقدر يعدل HTML المتصفح ويبعت total مزيف — احنا منحسبش غير من الداتابيز.
-- س: لو منتج اتمسح بعد ما اتباع؟ ج: الأوردر محفوظ باسمه وسعره (SET_NULL) فالفاتورة سليمة.
-- س: إزاي منعت حد يشوف أوردر حد؟ ج: كل استعلام فيه user=request.user، واتجربت: يوزر تاني بياخد 404.
+## 6. فيديوهات تذاكر منها
+- سلسلة متجر Django لـ Dennis Ivy (فيها الـ checkout والأوردرات):
+- https://www.youtube.com/c/dennisivy
+- كورس Django كامل بالعربي (Programming Secrets):
+- https://www.youtube.com/playlist?list=PLp2eAGIFKMEVnAAJWhGzLc1Nn-tFP1UHP
 
-## 6. العرض اللايف بتاعك (دقيقتين)
+## 7. أسئلة مناقشة متوقعة
+- س: اتنين اشتروا آخر قطعة مع بعض؟ ج: الـ transaction والـ F بيخلوا واحد ينجح والتاني يشوف رسالة.
+- س: ليه المجموع من السيرفر؟ ج: أي حد يقدر يعدل HTML المتصفح ويبعت total مزيف.
+- س: منتج اتمسح بعد ما اتباع؟ ج: الأوردر محفوظ باسمه وسعره فالفاتورة سليمة.
+- س: إزاي منعت رؤية أوردرات الغير؟ ج: كل استعلام فيه user=request.user، واتجربت بـ 404.
+
+## 8. العرض اللايف بتاعك
 1. اعمل checkout كامل وورّي صفحة التأكيد.
 2. افتح تاريخ الأوردرات وادخل على التفاصيل.
-3. انسخ لينك الأوردر وافتحه من يوزر تاني (incognito) وورّي الـ 404.
+3. انسخ لينك الأوردر وافتحه من يوزر تاني وورّي الـ 404.
