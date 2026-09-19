@@ -17,7 +17,7 @@ pip install -r requirements.txt
 copy .env.example .env        # then edit .env (PostgreSQL password below)
 python manage.py migrate
 python manage.py createsuperuser
-python manage.py seed         # 4 categories + 10 demo products
+python manage.py seed         # 10 demo products - or: seed_real for 150 real products with photos
 python manage.py runserver
 ```
 Or just double-click **`run.bat`**.

@@ -34,12 +34,18 @@ class Product(models.Model):
     price = models.DecimalField(max_digits=10, decimal_places=2)
     stock = models.PositiveIntegerField(default=0)
     image = models.ImageField(upload_to='products/', blank=True, null=True)
+    image_url = models.URLField(blank=True, help_text='Remote photo URL (used when no file is uploaded).')
     is_active = models.BooleanField(default=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
     def save(self, *args, **kwargs):
         if not self.slug:
-            self.slug = slugify(self.name)
+            base = slugify(self.name)
+            slug, i = base, 2
+            while Product.objects.filter(slug=slug).exclude(pk=self.pk).exists():
+                slug = f'{base}-{i}'
+                i += 1
+            self.slug = slug
         super().save(*args, **kwargs)
 
     def __str__(self):
@@ -59,7 +65,9 @@ class Product(models.Model):
         return self.stock == 0
 
     def cover_url(self):
-        """Uploaded image if present, else a deterministic demo photo."""
+        """Uploaded photo first, then the real remote photo, then a demo placeholder."""
         if self.image:
             return self.image.url
+        if self.image_url:
+            return self.image_url
         return f'https://picsum.photos/seed/{self.slug or self.pk or "shop"}/800/600'
