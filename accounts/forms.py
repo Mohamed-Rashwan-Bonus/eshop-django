@@ -1,6 +1,6 @@
 from django import forms
 from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
-from .models import CustomUser
+from .models import CustomUser, normalize_egyptian_phone
 
 CTRL = {'class': 'form-control'}
 
@@ -25,6 +25,10 @@ class RegisterForm(forms.ModelForm):
         if email and CustomUser.objects.filter(email__iexact=email).exists():
             raise forms.ValidationError('This email is already registered. Try logging in instead.')
         return email
+
+    def clean_phone(self):
+        # Normalize (+20/spaces) BEFORE max_length + validators run their checks.
+        return normalize_egyptian_phone(self.cleaned_data.get('phone', ''))
 
     def clean(self):
         data = super().clean()

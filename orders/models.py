@@ -1,6 +1,7 @@
 from django.db import models
 from django.conf import settings
 from catalog.models import Product
+from accounts.models import validate_egyptian_phone
 
 
 class Order(models.Model):
@@ -8,7 +9,7 @@ class Order(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='orders')
     full_name = models.CharField(max_length=200)
     email = models.EmailField()
-    phone = models.CharField(max_length=11)
+    phone = models.CharField(max_length=16, validators=[validate_egyptian_phone])
     address = models.CharField(max_length=300)
     city = models.CharField(max_length=100)
     total = models.DecimalField(max_digits=10, decimal_places=2)

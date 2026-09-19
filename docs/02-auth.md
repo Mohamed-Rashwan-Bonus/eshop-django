@@ -34,9 +34,11 @@ class CustomUser(AbstractUser):
 ```
 - الايميل وحيد على مستوى الداتابيز (شرط 3). حتى لو الفورم عدت حاجة، الداتابيز هتمنع التكرار.
 ```
-    phone = models.CharField(max_length=11, validators=[egyptian_phone])
+    phone = models.CharField(max_length=16, validators=[validate_egyptian_phone])
 ```
-- الموبايل 11 رقم ولازم يطابق الـ pattern المصري (شرط 5).
+- الموبايل بيتخزن 11 رقم بعد التنضيف (شرط 5). والـ 16 عشان المستخدم يقدر يكتب +20 أو مسافات.
+- الفالديشن على 3 مستويات: الشكل (010/011/012/015 + 8 أرقام)، رفض الأرقام المكررة (00000000)، ورفض المتسلسلة (12345678). و+20 والمسافات بيتنضفوا تلقائيا ويتخزنوا 01.
+- نفس القاعدة مطبقة على موبايل الشحن في الـ checkout (موبايل فيك = الأوردر مرفوض).
 ```
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = ['first_name', 'last_name', 'phone']
