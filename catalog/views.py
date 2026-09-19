@@ -41,3 +41,11 @@ def product_detail(request, slug):
     product = get_object_or_404(Product, slug=slug, is_active=True)
     related = Product.objects.filter(category=product.category, is_active=True).exclude(pk=product.pk)[:4]
     return render(request, 'catalog/product_detail.html', {'product': product, 'related': related})
+
+
+def white_friday(request):
+    """White Friday deals page: active products with a discount, biggest first."""
+    deals = (Product.objects.filter(is_active=True, discount_percent__gt=0)
+             .select_related('category').order_by('-discount_percent'))
+    return render(request, 'catalog/white_friday.html',
+                  {'deals': deals, 'biggest': deals.first()})

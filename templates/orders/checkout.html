@@ -39,6 +39,7 @@
       </ul>
       <hr>
       <div class="d-flex justify-content-between fw-bold fs-5"><span>Total</span><span>{{ cart.total }} EGP</span></div>
+      {% if cart.savings %}<div class="d-flex justify-content-between text-success fw-bold"><span>White Friday savings</span><span>−{{ cart.savings }} EGP</span></div>{% endif %}
       <small class="text-muted"><i class="bi bi-shield-check"></i> Stock is verified again before payment.</small>
     </div>
   </div>

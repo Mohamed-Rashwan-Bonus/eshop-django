@@ -33,7 +33,7 @@ def checkout(request):
                     return render(request, 'orders/checkout.html', {'cart': cart, 'form': form})
                 OrderItem.objects.create(
                     order=order, product=p,
-                    product_name=p.name, price=p.price, quantity=line['qty'],
+                    product_name=p.name, price=p.current_price, quantity=line['qty'],
                 )
                 Product.objects.filter(pk=p.pk).update(stock=F('stock') - line['qty'])  # req 48
             cart.clear()  # req 49

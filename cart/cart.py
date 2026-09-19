@@ -63,8 +63,12 @@ class Cart:
         products = Product.objects.filter(id__in=self.cart.keys())
         for p in products:
             qty = self.cart[str(p.id)]
-            yield {'product': p, 'qty': qty, 'subtotal': p.price * qty}
+            yield {'product': p, 'qty': qty, 'subtotal': p.current_price * qty}
 
     def total(self):
         """Req 39."""
         return sum(i['subtotal'] for i in self.items())
+
+    def savings(self):
+        """Total White Friday savings in this cart."""
+        return sum((i['product'].price - i['product'].current_price) * i['qty'] for i in self.items())

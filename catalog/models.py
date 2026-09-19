@@ -1,4 +1,5 @@
 from datetime import timedelta
+from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
 from django.utils import timezone
 from django.utils.text import slugify
@@ -35,6 +36,10 @@ class Product(models.Model):
     stock = models.PositiveIntegerField(default=0)
     image = models.ImageField(upload_to='products/', blank=True, null=True)
     image_url = models.URLField(blank=True, help_text='Remote photo URL (used when no file is uploaded).')
+    discount_percent = models.PositiveIntegerField(
+        default=0, validators=[MinValueValidator(0), MaxValueValidator(100)],
+        help_text='White Friday deal: 0 = no discount, e.g. 25 = 25% off.',
+    )
     is_active = models.BooleanField(default=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
@@ -63,6 +68,17 @@ class Product(models.Model):
     @property
     def is_out_of_stock(self):
         return self.stock == 0
+
+    @property
+    def has_deal(self):
+        return self.is_active and self.discount_percent > 0
+
+    @property
+    def current_price(self):
+        """Price the customer actually pays (deal-aware)."""
+        if self.discount_percent:
+            return round(self.price * (100 - self.discount_percent) / 100, 2)
+        return self.price
 
     def cover_url(self):
         """Uploaded photo first, then the real remote photo, then a demo placeholder."""

@@ -34,13 +34,14 @@
           {% if p.is_new %}<span class="badge text-bg-primary">New</span>{% endif %}
           {% if p.is_low_stock %}<span class="badge text-bg-warning">Only {{ p.stock }} left</span>{% endif %}
           {% if p.is_out_of_stock %}<span class="badge text-bg-danger">Out of stock</span>{% endif %}
+          {% if p.has_deal %}<span class="badge text-bg-danger">-{{ p.discount_percent }}%</span>{% endif %}
         </div>
       </div>
       <div class="card-body">
         <small class="text-muted">{{ p.category.name }}</small>
         <h6 class="fw-bold mb-1"><a class="text-dark text-decoration-none" href="{% url 'catalog:product_detail' p.slug %}">{{ p.name }}</a></h6>
         <div class="d-flex justify-content-between align-items-center">
-          <span class="price">{{ p.price }} EGP</span>
+          <span>{% if p.has_deal %}<span class="text-muted text-decoration-line-through small">{{ p.price }}</span> {% endif %}<span class="price">{{ p.current_price }} EGP</span></span>
           {% if not p.is_out_of_stock %}<a class="btn btn-sm btn-brand" href="{% url 'cart:add' p.id %}"><i class="bi bi-cart-plus"></i></a>{% endif %}
         </div>
       </div>

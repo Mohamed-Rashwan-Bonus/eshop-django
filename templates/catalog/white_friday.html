@@ -1,0 +1,66 @@
+{% extends 'base.html' %}
+{% block title %}White Friday Deals — up to 50% off — E-Shop{% endblock %}
+{% block content %}
+
+<div class="hero p-4 p-md-5 mb-4" style="background:radial-gradient(1000px 380px at 15% -10%, #f59e0b 0%, transparent 55%),radial-gradient(900px 380px at 90% 0%, #ef4444 0%, transparent 55%),linear-gradient(135deg, #0f172a 0%, #3b0764 60%, #7c2d12 100%)">
+  <span class="badge text-bg-warning mb-2"><i class="bi bi-lightning-charge-fill"></i> WHITE FRIDAY • 27 NOV</span>
+  <h1 class="display-5 fw-bold">Up to {% if biggest %}{{ biggest.discount_percent }}{% else %}50{% endif %}% off 🔥</h1>
+  <p class="lead text-light opacity-75">Real deals on {{ deals|length }} products. When the timer hits zero, prices go back up.</p>
+  <div class="d-flex gap-2 my-3" id="wf-countdown">
+    <div class="text-center bg-dark bg-opacity-50 rounded-3 px-3 py-2"><div class="fs-3 fw-bold" id="wf-d">–</div><small>days</small></div>
+    <div class="text-center bg-dark bg-opacity-50 rounded-3 px-3 py-2"><div class="fs-3 fw-bold" id="wf-h">–</div><small>hours</small></div>
+    <div class="text-center bg-dark bg-opacity-50 rounded-3 px-3 py-2"><div class="fs-3 fw-bold" id="wf-m">–</div><small>mins</small></div>
+    <div class="text-center bg-dark bg-opacity-50 rounded-3 px-3 py-2"><div class="fs-3 fw-bold" id="wf-s">–</div><small>secs</small></div>
+  </div>
+  <p class="fw-bold text-warning" id="wf-live" style="display:none">🔴 LIVE NOW — lowest prices of the year!</p>
+  <a class="btn btn-warning btn-lg fw-bold" href="#wf-deals"><i class="bi bi-bag-check"></i> Grab the deals</a>
+</div>
+
+<h4 class="fw-bold mb-3" id="wf-deals">All deals <small class="text-muted fs-6">({{ deals|length }} products, biggest discount first)</small></h4>
+<div class="row">
+  {% for p in deals %}
+  <div class="col-6 col-md-3 mb-4">
+    <div class="card product-card h-100 border-warning">
+      <div class="img-wrap">
+        <a href="{% url 'catalog:product_detail' p.slug %}"><img src="{{ p.cover_url }}" alt="{{ p.name }}" loading="lazy"></a>
+        <div class="badge-float"><span class="badge text-bg-danger fs-6">-{{ p.discount_percent }}%</span></div>
+      </div>
+      <div class="card-body d-flex flex-column">
+        <small class="text-muted">{{ p.category.name }}</small>
+        <h6 class="fw-bold mb-1"><a class="text-dark text-decoration-none" href="{% url 'catalog:product_detail' p.slug %}">{{ p.name }}</a></h6>
+        <div><span class="text-muted text-decoration-line-through">{{ p.price }}</span>
+        <span class="price fs-5">{{ p.current_price }} EGP</span></div>
+        {% if p.is_low_stock %}<small class="stock-low">Only {{ p.stock }} left at this price!</small>{% endif %}
+        <div class="mt-auto pt-2">
+          {% if p.is_out_of_stock %}<span class="stock-out">Gone — deal expired for this one</span>
+          {% else %}<a class="btn btn-warning btn-sm fw-bold w-100" href="{% url 'cart:add' p.id %}"><i class="bi bi-cart-plus"></i> Add • save {{ p.savings }} EGP</a>{% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+  {% empty %}
+  <div class="col-12"><div class="empty-state card side-card"><div class="big-icon">🏷️</div>
+  <h5 class="fw-bold mt-2">No deals right now</h5><p class="text-muted">Check back on White Friday!</p></div></div>
+  {% endfor %}
+</div>
+
+<script>
+(function () {
+  var target = new Date('2026-11-27T00:00:00+02:00').getTime();
+  function pad(n) { return (n < 10 ? '0' : '') + n; }
+  function tick() {
+    var diff = target - Date.now();
+    if (diff <= 0) {
+      document.getElementById('wf-live').style.display = 'block';
+      document.getElementById('wf-countdown').style.display = 'none';
+      return;
+    }
+    document.getElementById('wf-d').textContent = Math.floor(diff / 864e5);
+    document.getElementById('wf-h').textContent = pad(Math.floor(diff / 36e5) % 24);
+    document.getElementById('wf-m').textContent = pad(Math.floor(diff / 6e4) % 60);
+    document.getElementById('wf-s').textContent = pad(Math.floor(diff / 1e3) % 60);
+  }
+  tick(); setInterval(tick, 1000);
+})();
+</script>
+{% endblock %}

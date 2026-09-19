@@ -19,7 +19,7 @@
             <h6 class="fw-bold mb-0"><a class="text-dark text-decoration-none" href="{% url 'catalog:product_detail' line.product.slug %}">{{ line.product.name }}</a></h6>
             <a class="text-danger" data-confirm="Remove this item?" href="{% url 'cart:remove' line.product.id %}"><i class="bi bi-trash"></i></a>
           </div>
-          <small class="text-muted">{{ line.product.price }} EGP each</small>
+          <small class="text-muted">{% if line.product.has_deal %}<span class="text-decoration-line-through">{{ line.product.price }}</span> {% endif %}{{ line.product.current_price }} EGP each</small>
           <div class="d-flex justify-content-between align-items-center mt-2">
             <span>
               <a class="btn btn-sm btn-outline-secondary" href="{% url 'cart:decrease' line.product.id %}">−</a>
@@ -41,6 +41,7 @@
       <div class="d-flex justify-content-between text-muted"><span>Delivery</span><span class="text-success">Calculated at checkout</span></div>
       <hr>
       <div class="d-flex justify-content-between fw-bold fs-5"><span>Total</span><span>{{ cart.total }} EGP</span></div>
+      {% if cart.savings %}<div class="d-flex justify-content-between text-success fw-bold"><span>You save</span><span>−{{ cart.savings }} EGP 🎉</span></div>{% endif %}
       <a class="btn btn-success btn-lg w-100 mt-3" href="{% url 'orders:checkout' %}"><i class="bi bi-lock"></i> Secure checkout</a>
       <a class="btn btn-outline-secondary w-100 mt-2" href="{% url 'catalog:product_list' %}">Continue shopping</a>
       <small class="text-muted d-block mt-2 text-center"><i class="bi bi-shield-check"></i> Totals are re-calculated on the server.</small>
