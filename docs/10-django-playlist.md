@@ -29,6 +29,29 @@
 - https://www.youtube.com/playlist?list=PLCTifDArWwqKANPYbIDmso_ZOKNtQiWaE
 - للأعضاء: عضو 1 و 8 (الأوامر والسكريبتات) وأي حد ضعيف في البايثون.
 
+## المرحلة 5 — الأحدث (2024 و 2025) لو عايز حاجة فريش
+6. إعداد Django في 25 دقيقة (venv وموديل و migrate وقوالب وأدمن) — Code with Josh 2025:
+- https://www.youtube.com/watch?v=ndJeakZJGeQ
+- للأعضاء: عضو 1 و 3 (أسرع مراجعة تأسيس).
+7. بناء موقع Django كامل في 50 دقيقة (views و URLs وقوالب وفورم) — Code with Josh 2025:
+- https://www.youtube.com/watch?v=l0QEGvAX8rU
+- للأعضاء: عضو 4 و 7 (العرض والقوالب).
+8. كورس Django 5 الكامل للمبتدئين للاحتراف (4 ساعات: MVT و ORM و Auth) — نسخة 2025:
+- https://www.youtube.com/watch?v=hw3Cttc9qZQ
+- للأعضاء: عضو 2 و 3 و 6 (اللي عايز يفهم بعمق).
+9. كورس Django FullStack مع نشر الموقع و Custom User — نسخة 2024 (نفس فكرة اليوزر المخصص بتاعكم):
+- https://www.youtube.com/watch?v=QCDpBhW8XbM
+- للأعضاء: عضو 1 و 2.
+10. سلسلة Django خطوة بخطوة للمبتدئين 2025 (playlist كاملة):
+- https://www.youtube.com/playlist?list=PLg7VpLf3r3o9FVpJNhYPYq8JnixQSNkLI
+- للأعضاء: الكل كمرجع سريع.
+11. كراش كورس Django للمبتدئين (ساعة واحدة، مايو 2025) — freeCodeCamp:
+- https://www.freecodecamp.org/news/django-crash-course-for-beginners
+- للأعضاء: الكل كمراجعة أخيرة قبل المناقشة.
+12. مرجع Django بالعربي المكتوب (36 درس، محدث لـ Django 6.1 يعني نفس نسختكم):
+- https://thecodefix.net/learn/django/00-intro
+- للأعضاء: الكل — أحسن مرجع عربي سريع للمراجعة ليلة المناقشة.
+
 ## خريطة سريعة: كل عضو يشوف ايه
 - عضو 1 (تأسيس): رقم 1 + أول حلقتين من رقم 3.
 - عضو 2 (دخول): رقم 1 + حلقتي الدخول والبروفايل من رقم 3.
