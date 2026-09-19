@@ -143,6 +143,6 @@ def build(md_path, pdf_path):
     print('wrote', pdf_path.name, pdf.pages_count, 'pages')
 
 
-for md in sorted(BASE.glob('0*.md')):
+for md in sorted(BASE.glob('[01]*.md')):
     build(md, PDFS / (md.stem + '.pdf'))
 print('DONE')
