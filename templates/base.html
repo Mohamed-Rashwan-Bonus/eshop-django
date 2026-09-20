@@ -83,7 +83,7 @@
   <div class="container py-5">
     <div class="row">
       <div class="col-md-4"><h5 class="text-white"><i class="bi bi-bag-check-fill"></i> E-Shop.</h5>
-        <p class="small">Student-built Django MVT store. Browse, cart, checkout — admins manage everything from Django Admin.</p></div>
+        <p class="small">Django MVT store built by Mohamed Rashwan. Browse, cart, checkout — everything managed from Django Admin.</p></div>
       <div class="col-md-4"><h6 class="text-white">Shop</h6>
         {% for c in nav_categories %}<div><a href="{% url 'catalog:product_list' %}?category={{ c.slug }}">{{ c.name }}</a></div>{% endfor %}</div>
       <div class="col-md-4"><h6 class="text-white">Account</h6>
@@ -92,7 +92,7 @@
         <div><a href="{% url 'accounts:profile' %}">Profile</a></div></div>
     </div>
     <hr class="border-secondary">
-    <div class="d-flex justify-content-between small"><span>© 2026 E-Shop — Final Project (Team of 8)</span><span><i class="bi bi-shield-check"></i> Secure • <i class="bi bi-truck"></i> Fast • <i class="bi bi-arrow-counterclockwise"></i> Easy returns</span></div>
+    <div class="d-flex justify-content-between small"><span>© 2026 E-Shop — Built by Mohamed Rashwan</span><span><i class="bi bi-shield-check"></i> Secure • <i class="bi bi-truck"></i> Fast • <i class="bi bi-arrow-counterclockwise"></i> Easy returns</span></div>
   </div>
 </footer>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>

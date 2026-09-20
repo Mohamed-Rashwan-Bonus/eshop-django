@@ -1,6 +1,6 @@
-# E-Shop — Django MVT E-Commerce (Solo Build)
+# E-Shop — Django MVT E-Commerce
 
-Customers browse products, search & filter, view details, add to a session cart,
+Built by Mohamed Rashwan — customers browse products, search & filter, view details, add to a session cart,
 checkout with shipping info, and review order history. Admins manage everything in Django Admin.
 
 ## 1) Run it (Windows, 2 minutes)
@@ -38,8 +38,8 @@ Microsoft Store stub — use `py` or the `.\venv\Scripts\python.exe` path.
   `createdb -U postgres -h localhost ecommerce_db`
 - Switch engines anytime in `.env`: `DB_ENGINE=postgresql` or `sqlite`
 
-## 3) Solo build — full scope (54 requirements)
-Built end-to-end by one developer: `config` setup + `accounts` (register/login/logout/profile, EG phone validation) + `catalog` (Category/Product, PROTECT rule, list/detail/search/filter/sort) + `cart` (session cart, stock guard) + `orders` (checkout, stock-, history, privacy) + `templates+static` (Bootstrap 5, badges, toasts, responsive) + QA/seed/docs.
+## 3) Scope — اللي اتنفذ
+`config` + `accounts` (register/login/logout/profile + تحقق رقم مصري) + `catalog` (Category/Product + بحث/فلترة) + `cart` (سلة session + حماية مخزون) + `orders` (checkout + سجل طلبات) + واجهة Bootstrap 5 + seed بـ 150 منتج.
 
 > `.env`, `venv/` and `media/` are never committed (see `.gitignore`) — each machine generates its own via `setup.bat`.
 
