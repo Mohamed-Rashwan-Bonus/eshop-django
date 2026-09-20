@@ -1,4 +1,4 @@
-# E-Shop — Django MVT E-Commerce (Final Project, Team of 8)
+# E-Shop — Django MVT E-Commerce (Solo Build)
 
 Customers browse products, search & filter, view details, add to a session cart,
 checkout with shipping info, and review order history. Admins manage everything in Django Admin.
@@ -38,17 +38,8 @@ Microsoft Store stub — use `py` or the `.\venv\Scripts\python.exe` path.
   `createdb -U postgres -h localhost ecommerce_db`
 - Switch engines anytime in `.env`: `DB_ENGINE=postgresql` or `sqlite`
 
-## 3) Team of 8 → who owns what (PDF 1–54)
-| # | Person | App | Requirements |
-|---|--------|-----|--------------|
-| 1 | Lead / setup | `config` | settings, urls, base layout, merges |
-| 2 | Auth | `accounts` | 1–9: register/login/logout/profile, EG phone |
-| 3 | Models+Admin | `catalog` | 10–24: Category/Product, PROTECT rule |
-| 4 | Catalog UI | `catalog` | 25–31: list/detail/search/filter/sort |
-| 5 | Cart | `cart` | 32–41: session cart, stock guard |
-| 6 | Checkout+Orders | `orders` | 42–54: order, stock-, history, privacy |
-| 7 | Frontend/UX | templates+static | Bootstrap 5, badges, toasts, responsive |
-| 8 | QA/DB/Docs | — | test all 54, `seed`, README, demo |
+## 3) Solo build — full scope (54 requirements)
+Built end-to-end by one developer: `config` setup + `accounts` (register/login/logout/profile, EG phone validation) + `catalog` (Category/Product, PROTECT rule, list/detail/search/filter/sort) + `cart` (session cart, stock guard) + `orders` (checkout, stock-, history, privacy) + `templates+static` (Bootstrap 5, badges, toasts, responsive) + QA/seed/docs.
 
 > `.env`, `venv/` and `media/` are never committed (see `.gitignore`) — each machine generates its own via `setup.bat`.
 
