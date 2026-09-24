@@ -2,7 +2,7 @@ services:
   - type: web
     name: eshop-django
     runtime: python
-    buildCommand: "./build.sh"
+    buildCommand: "chmod +x build.sh && ./build.sh"
     startCommand: "gunicorn config.wsgi --log-file -"
     envVars:
       - key: DEBUG
